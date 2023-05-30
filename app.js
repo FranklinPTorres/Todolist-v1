@@ -5,27 +5,38 @@ const bodyParser = require("body-parser");
 
 const app = express();
 
-let item = []
+let items = ["Coding Time", "Resp at Home", "Play Tirzo"]
 
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended:true}));
+
 app.use(express.static("public"));
 
 app.get("/", function(req, res){
    let today = new Date();
 
-   let day = "";
+   let option = {
+    weekday: "long",
+    day: "numeric",
+    month: "long"
+   };
 
-   if(today.getDay() === 6 || today.getDay() === 0){
-    day = "Weekend";
+   let day = today.toLocaleDateString("en-US", option);
 
-   } else {
-    day = "Weekday";
-   
-   }
-   res.render("list",{kindOfDay: day})
+
+   res.render("list",{kindOfDay: day, newListItems: items})
 });
+
+app.post("/", function(req,res){
+    let item = req.body.newItem;
+
+    items.push(item);
+
+res.redirect("/");
+});
+
+
 
 
 app.listen(3000, function(){
